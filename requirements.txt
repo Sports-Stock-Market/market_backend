@@ -15,4 +15,4 @@ flask-socketio
 gunicorn
 pandas
 matplotlib
-mysql-python
+mysqlclient
