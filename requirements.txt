@@ -16,3 +16,4 @@ gunicorn
 pandas
 matplotlib
 mysqlclient
+psycopg2
