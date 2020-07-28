@@ -24,7 +24,9 @@ import math
 app = Flask(__name__)
 CORS(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = getenv('CLEARDB_DATABASE_URL')
+url = getenv('CLEARDB_DATABASE_URL')
+
+app.config['SQLALCHEMY_DATABASE_URI'] = url
 app.config['SQLALCHEMY_POOL_SIZE'] = 20
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['JWT_TOKEN_LOCATION'] = ['cookies', 'headers']
