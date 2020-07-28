@@ -13,3 +13,4 @@ flask-executor
 flask-apscheduler
 flask-socketio
 gunicorn
+pandas
