@@ -38,11 +38,13 @@ STARTING_ELOS = {
 }
 
 STRPTIME_FORMAT = '%m/%d/%Y'
+LOAD_START = '10/23/2019'
+
 K = 40
 
 H = 100
 
-LOAD_START = datetime.strptime(getenv('LOAD_START'), STRPTIME_FORMAT)
+LOAD_START = datetime.strptime(LOAD_START, STRPTIME_FORMAT)
 
 def get_starting_elo(tname):
     for k in STARTING_ELOS.keys():
