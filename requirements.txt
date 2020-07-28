@@ -2,6 +2,7 @@ flask
 werkzeug
 setuptools
 sqlalchemy
+flask-sqlalchemy
 flask-jwt-extended
 sqlalchemy-utils
 nba-api
