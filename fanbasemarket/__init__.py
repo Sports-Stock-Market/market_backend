@@ -24,7 +24,7 @@ import math
 app = Flask(__name__)
 CORS(app)
 
-url = getenv('CLEARDB_DATABASE_URL')
+url = getenv('DATABASE_URL')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = url
 app.config['SQLALCHEMY_POOL_SIZE'] = 20
