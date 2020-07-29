@@ -108,6 +108,7 @@ def buy_shares(usr, abr, num_shares, db):
     loc = db.session.merge(usr)
     db.session.add(loc)
     db.session.commit()
+    return res
 
 def sell_shares(usr, abr, num_shares, db):
     team = Team.query.filter(Team.abr == abr).first()
@@ -145,3 +146,4 @@ def sell_shares(usr, abr, num_shares, db):
     res = [{team.abr: {'date': str(now), 'price': team.price * .995}}]
     emit('prices', res, broadcast=True, namespace='/')
     update_teamPrice(team, -(team.price * .005), now, db)
+    return res

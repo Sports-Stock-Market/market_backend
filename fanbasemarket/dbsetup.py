@@ -20,9 +20,7 @@ INJURIES = {'2019-11-01':[['Paul George', 'Clippers', 'Month']],
     '2019-11-15':[['Jonathan Isaac', 'Magic', 'Month']], 
     '2020-01-01':[['Jonathan Isaac', 'Magic', 'Season']], 
     '2020-03-05':[['Bradley Beal', 'Wizards', 'Season'], ['DeAndre Jordan', 'Nets', 'Season']],
-    '2019-12-08':[['Rodney Hood', 'Trail Blazers', 'Season']],
-    '2020-03-06':[['Pascal Siakam', 'Raptors', 'Season']],
-    '2019-11-16':[['Nikola Jokic', 'Nuggets', 'Season']]
+    '2019-12-08':[['Rodney Hood', 'Trail Blazers', 'Season']]
 }
 
 STARTING_ELOS = {

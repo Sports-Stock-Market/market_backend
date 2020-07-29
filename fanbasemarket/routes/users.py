@@ -68,13 +68,13 @@ def make_purchase():
         usr = User.query.filter(User.username == uname).first()
         js = request.get_json()
         try:
-            buy_shares(usr, js['abr'], int(js['num_shares']), db)
+            res = buy_shares(usr, js['abr'], int(js['num_shares']), db)
+            return ok(res)
         except ValueError as e:
             return bad_request(str(e))
-        return ok({})
 
 @users.route('sellShares', methods=['POST'])
-@cross_origin('http://localhost:3000/')
+@cross_origin('*')
 @jwt_required
 def make_sale():
     uname = get_jwt_identity()
@@ -83,10 +83,10 @@ def make_sale():
         usr = User.query.filter(User.username == uname).first()
         js = request.get_json()
         try:
-            sell_shares(usr, js['abr'], int(js['num_shares']), db)
+            res = sell_shares(usr, js['abr'], int(js['num_shares']), db)
+            return ok(res)
         except ValueError as e:
             return bad_request(str(e))
-        return ok({})
 
 @users.route('availableFunds', methods=['GET'])
 @cross_origin('*')
