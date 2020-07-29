@@ -15,10 +15,10 @@ def get_price(prev_prices, date=None):
     if not date:
         return prev_prices[-1]
     ix = 0
-    dt = prev_prices[ix].date
-    while EST.localize(dt) <= date:
+    dt = EST.localize(prev_prices[ix].date)
+    while dt <= date:
         ix += 1
-        dt = prev_prices[ix].date
+        dt = EST.localize(prev_prices[ix].date)
     return prev_prices[ix - 1].elo
 
 def get_team_graph_points(tid, db):
