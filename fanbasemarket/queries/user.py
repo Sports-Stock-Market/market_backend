@@ -82,7 +82,7 @@ def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}
 
 def get_current_usr_value(uid, db):
     now = datetime.now(EST)
-    _, t, _ = get_assets_in_date_range(uid, 1500, now, db)
+    _, t, _ = get_assets_in_date_range(uid, 50000, now, db)
     return t
 
 def get_leaderboard(db):
@@ -105,7 +105,7 @@ def get_user_graph_points(uid, db):
     for k, x_values in x_values_dict.items():
         data_points[k] = []
         prev = {}
-        initial_date, val, funds = get_assets_in_date_range(uid, 15000, x_values[0], db, prev=prev)
+        initial_date, val, funds = get_assets_in_date_range(uid, 50000, x_values[0], db, prev=prev)
         data_points[k].append({'date': str(initial_date), 'price': val})
         for i, x_val in enumerate(x_values[:-1]):
             date, val, funds = get_assets_in_date_range(uid, funds, x_values[i + 1], db, start=x_val, prev=prev)
