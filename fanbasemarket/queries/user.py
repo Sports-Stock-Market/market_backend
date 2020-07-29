@@ -51,7 +51,7 @@ def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}
             filter(Sale.date <= end).\
             filter(Sale.date > start).all()
     total = previous_balance
-    last_date = EST.localize(end)
+    last_date = end
     if len(previous_purchases) != 0:
         for purchase in previous_purchases:
             abr = Team.query.filter(Team.id == purchase.team_id).first().abr
@@ -59,14 +59,14 @@ def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}
                 prev[abr] = 0
             prev[abr] += purchase.amt_purchased
             total -= (purchase.purchased_for * purchase.amt_purchased)
-            if purchase.date >= last_date:
-                last_date = purchase.date
+            if EST.localize(purchase.date) >= last_date:
+                last_date = EST.localize(purchase.date)
     if len(previous_sales) != 0:
         for sale in previous_sales:
             abr = Team.query.filter(Team.id == purchase.team_id).first().abr
             prev[abr] -= sale.amt_sold
-            if sale.date >= last_date:
-                last_date = sale.date
+            if EST.localize(sale.date) >= last_date:
+                last_date = EST.localize(sale.date)
             total += (sale.sold_for * sale.amt_sold)
     funds = total
     for abr, amt in prev:
