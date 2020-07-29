@@ -23,7 +23,7 @@ def get_price(prev_prices, date=None):
 
 def get_team_graph_points(tid, db):
     x_values_dict = get_graph_x_values()
-    previous_prices = Teamprice.query.filter(Teamprice.team-id == tid).all()
+    previous_prices = Teamprice.query.filter(Teamprice.team_id == tid).all()
     data_points = {}
     for k, x_values in x_values_dict.items():
         l = []
