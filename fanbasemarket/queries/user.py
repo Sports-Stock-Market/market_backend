@@ -63,7 +63,7 @@ def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}
                 last_date = EST.localize(purchase.date)
     if len(previous_sales) != 0:
         for sale in previous_sales:
-            abr = Team.query.filter(Team.id == purchase.team_id).first().abr
+            abr = Team.query.filter(Team.id == sale.team_id).first().abr
             prev[abr] -= sale.amt_sold
             if EST.localize(sale.date) >= last_date:
                 last_date = EST.localize(sale.date)
