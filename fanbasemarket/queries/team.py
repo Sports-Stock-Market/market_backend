@@ -11,21 +11,24 @@ from pytz import timezone
 
 EST = timezone('US/Eastern')
 
-def get_price(tid, db, date=None):
+def get_price(prev_prices, date=None):
     if not date:
-        date = str(datetime.now(EST))
-    return db.session.query(Teamprice). \
-        filter(Teamprice.team_id == tid). \
-        filter(Teamprice.date <= date). \
-        all()[-1].elo
+        return prev_prices[-1]
+    ix = 0
+    dt = prev_prices[ix].date
+    while dt <= date:
+        ix += 1
+        dt = prev_prices[ix].date
+    return prev_prices[ix - 1].elo
 
 def get_team_graph_points(tid, db):
     x_values_dict = get_graph_x_values()
+    previous_prices = Teamprice.query.filter(Teamprice.team-id == tid).all()
     data_points = {}
     for k, x_values in x_values_dict.items():
         l = []
         for x_val in x_values:
-            price = get_price(tid, db, date=x_val)
+            price = get_price(previous_prices, date=x_val)
             l.append({'date': str(x_val), 'price': price})
         data_points[k] = l
     return data_points
