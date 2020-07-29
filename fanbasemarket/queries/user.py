@@ -92,8 +92,16 @@ def get_current_usr_value(uid, db):
 
 def get_leaderboard(db):
     usrs_all = User.query.all()
-    vals = [(u.username, get_current_usr_value(u.id, db)) for u in usrs_all]
-    return [{'username': x, 'value': y} for x, y in vals]   
+    res = []
+    for usr in usrs_all:
+        holdings = get_active_holdings(usr.id, db)
+        total = usr.available_funds
+        for abr, item in holdings.items():
+            for p in item:
+                t = Team.query.filter(Team.abr == abr).first()
+                total += p['num_shares'] * t.price
+        res.append({'username': usr.username, 'value': total})
+    return res
 
 def get_user_graph_points(uid, db):
     x_values_dict = get_graph_x_values()
