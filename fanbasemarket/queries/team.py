@@ -17,7 +17,7 @@ def get_price(tid, db, date=None):
     return db.session.query(Teamprice). \
         filter(Teamprice.team_id == tid). \
         filter(Teamprice.date <= date). \
-        all()[-1].elo()
+        all()[-1].elo
 
 def get_team_graph_points(tid, db):
     x_values_dict = get_graph_x_values()
