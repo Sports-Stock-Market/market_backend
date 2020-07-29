@@ -2,6 +2,7 @@ from fanbasemarket.queries.team import set_player_rating
 from fanbasemarket.pricing.elo import simulate
 from fanbasemarket import db
 from datetime import datetime
+from nba_api.stats.static import teams
 
 INJURIES = {'2019-11-01':[['Paul George', 'Clippers', 'Month']],
     '2019-10-25': [['Deandre Ayton', 'Suns', 'Month']],

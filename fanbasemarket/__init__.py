@@ -1,7 +1,6 @@
 from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy.orm import scoped_session, sessionmaker
 from flask_jwt_extended import JWTManager
-from nba_api.stats.static import teams
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from flask_executor import Executor
