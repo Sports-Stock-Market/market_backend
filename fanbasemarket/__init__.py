@@ -42,7 +42,6 @@ app.config['JWT_COOKIE_CSRF_PROTECT'] = True
 app.config['JWT_SESSION_COOKIE'] = False
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_COOKIE_SECURE'] = True
-app.config['JWT_COOKIE_DOMAIN'] = 'https://fanbasemarketbackend.herokuapp.com/'
 
 
 db = SQLAlchemy(app)
