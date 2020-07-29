@@ -72,7 +72,7 @@ scheduler = APScheduler()
 
 from fanbasemarket.pricing.live import bigboy_pulls_only
 
-@scheduler.task('interval', seconds=30)
+@scheduler.task('interval', seconds=10)
 def pull_and_emit():
     with app.app_context():
         db = get_db()

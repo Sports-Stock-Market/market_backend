@@ -47,6 +47,19 @@ from fanbasemarket.models import *
 
 db.create_all()
 
+# Clear all current rows -- perfect for initial setup
+Player.query.delete()
+Purchase.query.delete()
+PurchaseTransaction.query.delete()
+Short.query.delete()
+Teamprice.query.delete()
+Game.query.delete()
+Listing.query.delete()
+BlacklistedToken.query.delete()
+Sale.query.delete()
+Team.query.delete()
+User.query.delete()
+
 def get_starting_elo(tname):
     for k in STARTING_ELOS.keys():
         if k in tname:
