@@ -14,7 +14,7 @@ EST = timezone('US/Eastern')
 def get_price(prev_prices, date=None):
     if not date:
         return prev_prices[-1]
-    if date > EST.localize(prev_prices[-1].date):
+    if date >= EST.localize(prev_prices[-1].date):
         return prev_prices[-1].elo
     ix = 0
     dt = EST.localize(prev_prices[ix].date)
