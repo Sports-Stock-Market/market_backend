@@ -58,7 +58,7 @@ def get_assets_in_date_range(uid, previous_balance, end, db, start=None):
         if purchase.date >= last_date:
             last_date = purchase.date
     for sale in previous_sales:
-        if sale.sold_at >= last_date:
+        if sale.date >= last_date:
             last_date = sale.date
             total += (sale.sold_for * sale.amt_sold)
     return last_date, total
