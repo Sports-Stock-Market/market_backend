@@ -44,8 +44,7 @@ def create_user():
             db.session.commit()
             access_jwt = create_access_token(identity=uname)
             refresh_jwt = create_refresh_token(identity=uname)
-            resp = ok({'access_token': access_jwt, 'username': uname})
-            set_refresh_cookies(resp, refresh_jwt)
+            resp = ok({'access_token': access_jwt, 'refresh_token': refresh_jwt, 'username': uname})
             return resp
         except:
             return bad_request('username/email is already in use')
@@ -65,8 +64,7 @@ def login_user():
         if user.check_password(pwrd):
             access_jwt = create_access_token(identity=uname)
             refresh_jwt = create_refresh_token(identity=uname)
-            resp = ok({'access_token': access_jwt, 'username': uname})
-            set_refresh_cookies(resp, refresh_jwt)
+            resp = ok({'access_token': access_jwt, 'refresh_token': refresh_jwt, 'username': uname})
             return resp
         return bad_request('invalid password')
 
@@ -92,5 +90,4 @@ def logout_user():
         db.session.add(blTok)
         db.session.commit()
         resp = ok({})
-        unset_jwt_cookies(resp)
         return resp

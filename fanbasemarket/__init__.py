@@ -34,14 +34,13 @@ url = f'mysql://{dbusr}:{dbpass}@{dburl}/primary_app_db'
 app.config['SQLALCHEMY_DATABASE_URI'] = url
 app.config['SQLALCHEMY_POOL_SIZE'] = 20
 app.config['CORS_HEADERS'] = 'Content-Type'
-app.config['JWT_TOKEN_LOCATION'] = ['cookies', 'headers']
+app.config['JWT_TOKEN_LOCATION'] = ['headers']
 app.config['JWT_SECRET_KEY'] = getenv('API_SECRET')
 app.config['JWT_BLACKLIST_ENABLED'] = True
 app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 app.config['JWT_COOKIE_CSRF_PROTECT'] = True
 app.config['JWT_SESSION_COOKIE'] = False
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['JWT_COOKIE_SECURE'] = True
 
 
 db = SQLAlchemy(app)
