@@ -51,7 +51,7 @@ def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}
             filter(Sale.date <= end).\
             filter(Sale.date > start).all()
     total = previous_balance
-    last_date = end
+    last_date = EST.localize(end)
     if len(previous_purchases) != 0:
         for purchase in previous_purchases:
             abr = Team.query.filter(Team.id == purchase.team_id).first().abr
