@@ -56,7 +56,7 @@ def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}
     if len(previous_purchases) != 0:
         for purchase in previous_purchases:
             abr = Team.query.filter(Team.id == purchase.team_id).first().abr
-            if abr not in prev:
+            if abr not in new:
                 new[abr] = 0
             new[abr] += purchase.amt_purchased
             total -= (purchase.purchased_for * purchase.amt_purchased)
