@@ -31,6 +31,7 @@ def get_active_holdings(uid, db, date=None):
             holdings[tm.abr].append(res)
     return holdings
 
+from fanbasemarket.queries.team import get_price
 
 def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}):
     if start is None:
@@ -54,14 +55,25 @@ def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}
         return end, total
     last_date = previous_purchases[0].date
     for purchase in previous_purchases:
+        abr = Team.query.filter(Team.id == purchase.team_id).first().abr
+        if abr not in prev:
+            prev[abr] = 0
+        prev[abr] += purchase.amt_purchased
         total -= (purchase.purchased_for * purchase.amt_purchased)
         if purchase.date >= last_date:
             last_date = purchase.date
     for sale in previous_sales:
+        abr = Team.query.filter(Team.id == purchase.team_id).first().abr
+        prev[abr] -= sale.amt_sold
         if sale.date >= last_date:
             last_date = sale.date
         total += (sale.sold_for * sale.amt_sold)
-    return last_date, total
+    funds = total
+    for abr, amt in prev:
+        tm = Team.query.filter(Team.abr == abr).first()
+        prev_prices = Teamprice.query.filter(Teamprice.team_id == tm.id).all()
+        total += get_price(prev_prices, last_date)
+    return last_date, total, funds
 
 def get_current_usr_value(uid, db):
     now = str(datetime.now(EST))
@@ -79,10 +91,11 @@ def get_user_graph_points(uid, db):
     data_points = {}
     for k, x_values in x_values_dict.items():
         data_points[k] = []
-        initial_date, val = get_assets_in_date_range(uid, 15000, x_values[0], db)
+        prev = {}
+        initial_date, val, funds = get_assets_in_date_range(uid, 15000, x_values[0], db, prev=prev)
         data_points[k].append({'date': str(initial_date), 'price': val})
         for i, x_val in enumerate(x_values[:-1]):
-            date, val = get_assets_in_date_range(uid, val, x_values[i + 1], db, start=x_val)
+            date, val, funds = get_assets_in_date_range(uid, funds, x_values[i + 1], db, start=x_val, prev=prev)
             date_s = str(date)
             data_points[k].append({'date': date_s, 'price': val})
     return data_points
