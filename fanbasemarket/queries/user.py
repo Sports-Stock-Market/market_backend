@@ -69,7 +69,7 @@ def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}
                 last_date = EST.localize(sale.date)
             total += (sale.sold_for * sale.amt_sold)
     funds = total
-    for abr, amt in prev:
+    for abr, amt in prev.items():
         tm = Team.query.filter(Team.abr == abr).first()
         prev_prices = Teamprice.query.filter(Teamprice.team_id == tm.id).all()
         total += get_price(prev_prices, last_date)
