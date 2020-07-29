@@ -56,6 +56,8 @@ def gen_usrPg():
                 total += p['num_shares'] * t.price
         payload['total_assets'] = total
         payload['graphData'] = get_user_graph_points(uid, db)
+        for k in payload['graphData'].keys():
+            payload['graphData'][k].append({'date': date, 'price': total})
         return ok(payload)
 
 @users.route('buyShares', methods=['POST'])

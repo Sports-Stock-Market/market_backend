@@ -5,10 +5,12 @@ from fanbasemarket.models import Team, User
 from fanbasemarket.routes.utils import ok, bad_request
 from fanbasemarket.queries.team import get_team_graph_points, get_user_position
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from pytz import timezone
 
 teams = Blueprint('teams', __name__)
 CORS(teams)
 
+EST = timezone('US/Eastern')
 
 @teams.after_request
 def creds(response):
@@ -25,6 +27,9 @@ def all_team_data():
         for team in teams_all:
             d = {}
             d['graph'] = get_team_graph_points(team.id, db)
+            for k in d['graph'].keys():
+                date = str(datetime.now(EST))
+                d['graph'][k].append({'date': date, 'price': team.price})
             d['price'] = {'price': team.price}
             d['name'] = team.name
             payload[team.abr] = d
