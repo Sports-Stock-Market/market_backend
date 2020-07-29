@@ -17,3 +17,4 @@ pandas
 matplotlib
 mysqlclient
 psycopg2
+eventlet
