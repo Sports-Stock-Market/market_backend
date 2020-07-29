@@ -7,7 +7,7 @@ from flask_socketio import emit
 
 from fanbasemarket.queries.utils import get_graph_x_values
 from fanbasemarket.queries.team import update_teamPrice
-from fanbasemarket.models import Purchase, User, Team, Sale, PurchaseTransaction
+from fanbasemarket.models import Purchase, User, Team, Sale, PurchaseTransaction, Teamprice
 
 EST = timezone('US/Eastern')
 
