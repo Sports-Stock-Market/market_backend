@@ -29,7 +29,7 @@ dburl = getenv('DATABASE_URL')
 dbusr = getenv('DATABASE_USER')
 dbpass = getenv('DATABASE_PASS')
 
-url = f'mysql://{dbusr}:{dbpass}@{dburl}/primary_app_db'
+url = f'mysql://{dbusr}:{dbpass}@{dburl}/fanbasemarket'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = url
 app.config['SQLALCHEMY_POOL_SIZE'] = 20
