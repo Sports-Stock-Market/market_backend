@@ -49,6 +49,7 @@ def get_assets_in_date_range(uid, previous_balance, end, db, start=None):
             filter(Sale.user_id == uid).\
             filter(Sale.date <= end).\
             filter(Sale.date > start).all()
+    print(end)
     print(previous_purchases)
     print(previous_sales)
     total = previous_balance
