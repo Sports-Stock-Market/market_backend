@@ -45,7 +45,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
-io = SocketIO(app)
+io = SocketIO(app, cors_allowed_origins=None)
 
 executor = Executor(app)
 
