@@ -26,6 +26,6 @@ def get_graph_x_values():
         x_values['1W'].append(week_ago)
         week_ago += timedelta(days=1)
     while yesterday <= now:
-        x_values['1D'].append(beginning_of_day)
+        x_values['1D'].append(yesterday)
         yesterday += timedelta(minutes=5)
     return x_values
