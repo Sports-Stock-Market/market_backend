@@ -101,4 +101,30 @@ simulate(2019, 2020, 45, 100, True, INJURIES, db)
 
 print('historical prices')
 
+NOT_IN_BUBBLE = [
+    'Chicago Bulls',
+    'Charlotte Hornets',
+    'New York Knicks',
+    'Detroit Pistons',
+    'Atlanta Hawks',
+    'Cleveland Cavaliers',
+    'Minnesota Timberwolves',
+    'Golden State Warriors'
+]
+
+for tname in NOT_IN_BUBBLE:
+    tm = Team.query.filter(Team.name == tname).first()
+    players = Player.query.filter(Player.team_id == tm.id).all()
+    for player in players:
+        db.session.delete(player)
+        db.session.commit()
+    prices = Teamprice.query.filter(Teamprice.team_id == tm.id).all()
+    for price in prices:
+        db.session.delete(price)
+        db.session.commit()
+    db.session.delete(tm)
+    db.session.commit()
+
+print('out-of-bubble teams removed')
+
 db.session.remove()
