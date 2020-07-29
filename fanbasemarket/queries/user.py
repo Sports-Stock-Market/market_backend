@@ -51,37 +51,39 @@ def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}
             filter(Sale.user_id == uid).\
             filter(Sale.date <= end).\
             filter(Sale.date > start).all()
-    total = previous_balance
     last_date = end
     new = {}
-    if len(previous_purchases) != 0:
-        for purchase in previous_purchases:
-            abr = Team.query.filter(Team.id == purchase.team_id).first().abr
-            if abr not in new:
-                new[abr] = 0
-            new[abr] += purchase.amt_purchased
-            total -= (purchase.purchased_for * purchase.amt_purchased)
-            if EST.localize(purchase.date) >= last_date:
-                last_date = EST.localize(purchase.date)
-    if len(previous_sales) != 0:
-        for sale in previous_sales:
-            abr = Team.query.filter(Team.id == sale.team_id).first().abr
-            if abr not in new:
-                new[abr] = 0
-            new[abr] -= sale.amt_sold
-            if EST.localize(sale.date) >= last_date:
-                last_date = EST.localize(sale.date)
-            total += (sale.sold_for * sale.amt_sold)
-    funds = total
+
+    net_spend = 0
+    for purchase in previous_purchases:
+        abr = Team.query.filter(Team.id == purchase.team_id).first().abr
+        if abr not in prev:
+            prev[abr] = 0
+        prev[abr] += purchase.amt_purchased
+        net_spend += (purchase.purchased_for * purchase.amt_purchased)
+        if EST.localize(purchase.date) >= last_date:
+            last_date = EST.localize(purchase.date)
+    for sale in previous_sales:
+        abr = Team.query.filter(Team.id == sale.team_id).first().abr
+        if abr not in prev:
+            prev[abr] = 0
+        prev[abr] -= sale.amt_sold
+        net_spend -= (sale.sold_for * sale.amt_sold)
+        if EST.localize(sale.date) >= last_date:
+            last_date = EST.localize(sale.date)
+    funds = previous_balance - net_spend
+
+    print(f'funds: {funds}')
+
+    assets = 0
     for abr, amt in prev.items():
         tm = Team.query.filter(Team.abr == abr).first()
         prev_prices = Teamprice.query.filter(Teamprice.team_id == tm.id).all()
-        total += get_price(prev_prices, last_date) * amt
-    for abr, amt in new.items():
-        if abr not in prev:
-            prev[abr] = 0
-        prev[abr] += amt
-    return last_date, total, funds
+        assets += get_price(prev_prices, last_date) * amt
+    
+    print(f'assets: {assets}')
+
+    return last_date, funds + assets, funds
 
 def get_current_usr_value(uid, db):
     now = str(datetime.now(EST))
