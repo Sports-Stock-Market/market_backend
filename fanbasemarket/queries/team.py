@@ -16,7 +16,7 @@ def get_price(prev_prices, date=None):
         return prev_prices[-1]
     ix = 0
     dt = prev_prices[ix].date
-    while dt <= date:
+    while EST.localize(dt) <= date:
         ix += 1
         dt = prev_prices[ix].date
     return prev_prices[ix - 1].elo
