@@ -17,15 +17,15 @@ def get_graph_x_values():
         'SZN': []
     }
     while beginning_of_szn <= beginning_of_day:
-        x_values['SZN'].append(beginning_of_szn)
+        x_values['SZN'].append(EST.localize(beginning_of_szn))
         beginning_of_szn += timedelta(weeks=1)
     while month_ago <= beginning_of_day:
-        x_values['1M'].append(month_ago)
+        x_values['1M'].append(EST.localize(month_ago))
         month_ago += timedelta(days=1)
     while week_ago <= beginning_of_day:
-        x_values['1W'].append(week_ago)
+        x_values['1W'].append(EST.localize(week_ago))
         week_ago += timedelta(days=1)
     while yesterday <= now:
-        x_values['1D'].append(beginning_of_day)
+        x_values['1D'].append(EST.localize(beginning_of_day))
         yesterday += timedelta(minutes=5)
     return x_values
