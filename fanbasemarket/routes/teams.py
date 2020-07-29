@@ -6,6 +6,7 @@ from fanbasemarket.routes.utils import ok, bad_request
 from fanbasemarket.queries.team import get_team_graph_points, get_user_position
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from pytz import timezone
+from datetime import datetime
 
 teams = Blueprint('teams', __name__)
 CORS(teams)
