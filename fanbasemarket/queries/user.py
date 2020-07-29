@@ -32,7 +32,7 @@ def get_active_holdings(uid, db, date=None):
     return holdings
 
 
-def get_assets_in_date_range(uid, previous_balance, end, db, start=None):
+def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}):
     if start is None:
         previous_purchases = PurchaseTransaction.query.\
             filter(PurchaseTransaction.user_id == uid).\
@@ -49,9 +49,6 @@ def get_assets_in_date_range(uid, previous_balance, end, db, start=None):
             filter(Sale.user_id == uid).\
             filter(Sale.date <= end).\
             filter(Sale.date > start).all()
-    print(end)
-    print(previous_purchases)
-    print(previous_sales)
     total = previous_balance
     if not previous_purchases:
         return end, total
@@ -63,7 +60,7 @@ def get_assets_in_date_range(uid, previous_balance, end, db, start=None):
     for sale in previous_sales:
         if sale.date >= last_date:
             last_date = sale.date
-            total += (sale.sold_for * sale.amt_sold)
+        total += (sale.sold_for * sale.amt_sold)
     return last_date, total
 
 def get_current_usr_value(uid, db):
