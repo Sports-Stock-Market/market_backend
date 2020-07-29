@@ -86,7 +86,7 @@ def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}
     return last_date, funds + assets, funds
 
 def get_current_usr_value(uid, db):
-    now = str(datetime.now(EST))
+    now = datetime.now(EST)
     _, t = get_assets_in_date_range(uid, 1500, now, db)
     return t
 
