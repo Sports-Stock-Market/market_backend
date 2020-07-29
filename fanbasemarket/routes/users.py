@@ -24,14 +24,14 @@ def creds(response):
     return response
 
 @users.route('/leaderboard', methods=['GET'])
-@cross_origin('http://localhost:3000/')
+@cross_origin('*')
 def leaderboard():
     with app.app_context():
         db = get_db()
         return ok(get_leaderboard(db))
 
 @users.route('/usrPg', methods=['GET'])
-@cross_origin('http://localhost:3000/')
+@cross_origin('*')
 def gen_usrPg():
     with app.app_context():
         db = get_db()
@@ -59,7 +59,7 @@ def gen_usrPg():
         return ok(payload)
 
 @users.route('buyShares', methods=['POST'])
-@cross_origin('http://localhost:3000/')
+@cross_origin('*')
 @jwt_required
 def make_purchase():
     uname = get_jwt_identity()
@@ -89,7 +89,7 @@ def make_sale():
         return ok({})
 
 @users.route('availableFunds', methods=['GET'])
-@cross_origin('http://localhost:3000/')
+@cross_origin('*')
 @jwt_required
 def get_avFunds():
     uname = get_jwt_identity()

@@ -16,7 +16,7 @@ def creds(response):
     return response
 
 @teams.route('allTeamData', methods=['GET'])
-@cross_origin('http://localhost:3000/')
+@cross_origin('*')
 def all_team_data():
     with app.app_context():
         db = get_db()
@@ -31,7 +31,7 @@ def all_team_data():
         return ok(payload)
 
 @teams.route('teamNames', methods=['GET'])
-@cross_origin('http://localhost:3000/')
+@cross_origin('*')
 def names():
     with app.app_context():
         db = get_db()
@@ -42,7 +42,7 @@ def names():
         return ok(payload)
 
 @teams.route('position', methods=['GET'])
-@cross_origin('http://localhost:3000/')
+@cross_origin('*')
 @jwt_required
 def get_pos():
     uname = get_jwt_identity()

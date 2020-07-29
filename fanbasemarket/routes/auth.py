@@ -26,7 +26,7 @@ def check_if_token_in_blacklist(tok):
 
 
 @auth.route('/register', methods=['POST'])
-@cross_origin(origin='http://localhost:3000/')
+@cross_origin(origin='*')
 def create_user():
     with app.app_context():
         db = get_db()
@@ -52,7 +52,7 @@ def create_user():
 
 
 @auth.route('/login', methods=['POST'])
-@cross_origin(origin='http://localhost:3000/')
+@cross_origin(origin='*')
 def login_user():
     with app.app_context():
         db = get_db()
@@ -72,7 +72,7 @@ def login_user():
 
 
 @auth.route('/refresh', methods=['POST'])
-@cross_origin(origin='http://localhost:3000/')
+@cross_origin(origin='*')
 @jwt_refresh_token_required
 def refresh_jwt():
     user = get_jwt_identity()
@@ -82,7 +82,7 @@ def refresh_jwt():
 
 
 @auth.route('/logout', methods=['DELETE'])
-@cross_origin(origin='http://localhost:3000/')
+@cross_origin(origin='*')
 @jwt_required
 def logout_user():
     tok = get_raw_jwt()['jti']
