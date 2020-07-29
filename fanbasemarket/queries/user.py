@@ -34,7 +34,6 @@ def get_active_holdings(uid, db, date=None):
 from fanbasemarket.queries.team import get_price
 
 def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}):
-    print(prev)
     if start is None:
         previous_purchases = PurchaseTransaction.query.\
             filter(PurchaseTransaction.user_id == uid).\
@@ -73,15 +72,11 @@ def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}
             last_date = EST.localize(sale.date)
     funds = previous_balance - net_spend
 
-    print(f'funds: {funds}')
-
     assets = 0
     for abr, amt in prev.items():
         tm = Team.query.filter(Team.abr == abr).first()
         prev_prices = Teamprice.query.filter(Teamprice.team_id == tm.id).all()
         assets += get_price(prev_prices, last_date) * amt
-    
-    print(f'assets: {assets}')
 
     return last_date, funds + assets, funds
 

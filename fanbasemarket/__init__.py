@@ -41,6 +41,7 @@ app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 app.config['JWT_COOKIE_CSRF_PROTECT'] = True
 app.config['JWT_SESSION_COOKIE'] = False
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['JWT_COOKIE_SECURE'] = True
 
 
 db = SQLAlchemy(app)
