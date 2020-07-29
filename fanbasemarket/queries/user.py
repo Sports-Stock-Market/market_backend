@@ -87,7 +87,7 @@ def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}
 
 def get_current_usr_value(uid, db):
     now = datetime.now(EST)
-    _, t = get_assets_in_date_range(uid, 1500, now, db)
+    _, t, _ = get_assets_in_date_range(uid, 1500, now, db)
     return t
 
 def get_leaderboard(db):
