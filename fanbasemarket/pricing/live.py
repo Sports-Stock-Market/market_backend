@@ -40,6 +40,8 @@ def bigboy_pulls_only(db):
     for i in ret:
         if not i['is_on']:
             continue
+        if i['home_score'] == 0 and i['away_score'] == 0:
+            continue
         home_abv = i['home_team']
         away_abv = i['away_team']
         home_tObj = Team.query.filter(Team.abr == home_abv).first()
