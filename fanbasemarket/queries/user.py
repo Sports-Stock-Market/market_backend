@@ -14,13 +14,13 @@ EST = timezone('US/Eastern')
 def get_active_holdings(uid, db, date=None):
     if not date:
         date = str(datetime.now(EST))
-    results = Purchase.query.\
+    results = db.session.query(Purchase).\
         filter(Purchase.user_id == uid).\
         filter(Purchase.exists == True).\
         all()
     holdings = {}
     for result in results:
-        tm = Team.query.filter(Team.id == result.team_id).first()
+        tm = db.session.query(Team).filter(Team.id == result.team_id).first()
         bt_at = str(result.purchased_at)
         bt_f = result.purchased_for
         amt_shares = result.amt_shares
@@ -35,18 +35,18 @@ from fanbasemarket.queries.team import get_price
 
 def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}):
     if start is None:
-        previous_purchases = PurchaseTransaction.query.\
+        previous_purchases = db.session.query(PurchaseTransaction).\
             filter(PurchaseTransaction.user_id == uid).\
             filter(PurchaseTransaction.date <= end).all()
-        previous_sales = Sale.query.\
+        previous_sales = db.session.query(Sale).\
             filter(Sale.user_id == uid).\
             filter(Sale.date <= end).all()
     else:
-        previous_purchases = PurchaseTransaction.query.\
+        previous_purchases = db.session.query(PurchaseTransaction).\
             filter(PurchaseTransaction.user_id == uid).\
             filter(PurchaseTransaction.date <= end).\
             filter(PurchaseTransaction.date > start).all()
-        previous_sales = Sale.query.\
+        previous_sales = db.session.query(Sale).\
             filter(Sale.user_id == uid).\
             filter(Sale.date <= end).\
             filter(Sale.date > start).all()
@@ -55,7 +55,7 @@ def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}
 
     net_spend = 0
     for purchase in previous_purchases:
-        abr = Team.query.filter(Team.id == purchase.team_id).first().abr
+        abr = db.session.query(Team).filter(Team.id == purchase.team_id).first().abr
         if abr not in prev:
             prev[abr] = 0
         prev[abr] += purchase.amt_purchased
@@ -63,7 +63,7 @@ def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}
         if EST.localize(purchase.date) >= last_date:
             last_date = EST.localize(purchase.date)
     for sale in previous_sales:
-        abr = Team.query.filter(Team.id == sale.team_id).first().abr
+        abr = db.session.query(Team).filter(Team.id == sale.team_id).first().abr
         if abr not in prev:
             prev[abr] = 0
         prev[abr] -= sale.amt_sold
@@ -74,8 +74,8 @@ def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}
 
     assets = 0
     for abr, amt in prev.items():
-        tm = Team.query.filter(Team.abr == abr).first()
-        prev_prices = Teamprice.query.filter(Teamprice.team_id == tm.id).all()
+        tm = db.session.query(Team).filter(Team.abr == abr).first()
+        prev_prices = db.session.query(Teamprice).filter(Teamprice.team_id == tm.id).all()
         assets += get_price(prev_prices, last_date) * amt
 
     return last_date, funds + assets, funds
@@ -86,14 +86,14 @@ def get_current_usr_value(uid, db):
     return t
 
 def get_leaderboard(db):
-    usrs_all = User.query.all()
+    usrs_all = db.session.query(User).all()
     res = []
     for usr in usrs_all:
         holdings = get_active_holdings(usr.id, db)
         total = usr.available_funds
         for abr, item in holdings.items():
             for p in item:
-                t = Team.query.filter(Team.abr == abr).first()
+                t = db.session.query(Team).filter(Team.abr == abr).first()
                 total += p['num_shares'] * t.price
         res.append({'username': usr.username, 'value': total})
     return res
@@ -114,7 +114,7 @@ def get_user_graph_points(uid, db):
     return data_points
 
 def buy_shares(usr, abr, num_shares, db):
-    team = Team.query.filter(Team.abr == abr).first()
+    team = db.session.query(Team).filter(Team.abr == abr).first()
     price = num_shares * team.price * 1.005
     if usr.available_funds < price:
         raise ValueError('not enough funds')
@@ -137,9 +137,9 @@ def buy_shares(usr, abr, num_shares, db):
     return res
 
 def sell_shares(usr, abr, num_shares, db):
-    team = Team.query.filter(Team.abr == abr).first()
+    team = db.session.query(Team).filter(Team.abr == abr).first()
     price = num_shares * team.price * 0.995
-    all_holdings = Purchase.query.filter(Purchase.user_id == usr.id).filter(Purchase.team_id == team.id).filter(Purchase.exists == True).all()
+    all_holdings = db.session.query(Purchase).filter(Purchase.user_id == usr.id).filter(Purchase.team_id == team.id).filter(Purchase.exists == True).all()
     total_shares = reduce(lambda x, p: x + p.amt_shares, all_holdings, 0)
     if num_shares > total_shares:
         raise ValueError('not enough shares owned')
