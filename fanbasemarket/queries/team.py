@@ -11,7 +11,7 @@ from pytz import timezone
 
 EST = timezone('US/Eastern')
 
-def get_price(tid, date=None):
+def get_price(tid, db, date=None):
     if date is None:
         return db.session.query(Teamprice).\
             filter(Teamprice.team_id == tid).\
@@ -29,7 +29,7 @@ def get_team_graph_points(tid, db):
     for k, x_values in x_values_dict.items():
         l = []
         for x_val in x_values:
-            price = get_price(tid, date=x_val)
+            price = get_price(tid, db, date=x_val)
             l.append({'date': str(x_val), 'price': price})
         data_points[k] = l
     return data_points
