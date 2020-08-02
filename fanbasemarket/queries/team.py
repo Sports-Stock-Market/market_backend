@@ -43,7 +43,7 @@ def get_all_team_data(db):
         d['name'] = team.name
         d['price'] = team.price
         prev_prices = db.session.query(Teamprice).\
-            filter(Teamprice.team_id == team.id)
+            filter(Teamprice.team_id == team.id).all()
         d['graph'] = {}
         d['graph']['SZN'] = [{'date': str(date), 'price': price} \
                              for date, price in prev_prices]
