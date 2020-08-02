@@ -104,7 +104,7 @@ def get_user_graph_points(uid, db):
         initial_date, val, funds = get_assets_in_date_range(uid, 50000, x_values[0], prev_ps, prev_ss, db, prev=prev)
         data_points[k].append({'date': str(initial_date), 'price': val})
         for i, x_val in enumerate(x_values[:-1]):
-            date, val, funds = get_assets_in_date_range(uid, funds, x_values[i + 1], perv_ps, prev_ss, db, start=x_val, prev=prev)
+            date, val, funds = get_assets_in_date_range(uid, funds, x_values[i + 1], prev_ps, prev_ss, db, start=x_val, prev=prev)
             date_s = str(date)
             data_points[k].append({'date': date_s, 'price': val})
     return data_points
