@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from sqlalchemy import desc
 
 from sqlalchemy.ext.declarative import declarative_base
@@ -49,7 +47,7 @@ def get_all_team_data(db):
                              for price in prev_prices]
         d['graph']['1M'] = [{'date': str(price.date), 'price': price.elo} \
                             for price in prev_prices if \
-                            price.elo + timedelta(weeks=4) >= now]
+                            price.date + timedelta(weeks=4) >= now]
         d['graph']['1W'] = [{'date': str(price.date), 'price': price.elo} \
                             for price in prev_prices if \
                             price.date + timedelta(weeks=1) >= now]
