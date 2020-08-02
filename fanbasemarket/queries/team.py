@@ -35,11 +35,11 @@ def get_team_graph_points(tid, db):
 def get_all_team_data(db):
     payload = {}
     all_teams = db.session.query(Team).all()
-    now = EST.localize(datetime.now())
+    now = datetime.now(EST)
     for team in all_teams:
         d = {}
         d['name'] = team.name
-        d['price'] = team.price
+        d['price'] = {'price': team.price}
         prev_prices = db.session.query(Teamprice).\
             filter(Teamprice.team_id == team.id).all()
         d['graph'] = {}
