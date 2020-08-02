@@ -53,7 +53,7 @@ def get_all_team_data(db):
                             EST.localize(price.date) + timedelta(weeks=1) >= now]
         d['graph']['1D'] = [{'date': str(price.date), 'price': price.elo} \
                             for price in prev_prices if \
-                            EST.localize(price.date) + timedelta(days=1) >= now]
+                            EST.localize(price.date) + timedelta(hours=24) >= now]
         payload[team.abr] = d
     return payload
 
