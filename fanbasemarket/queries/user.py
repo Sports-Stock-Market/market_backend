@@ -33,25 +33,18 @@ def get_active_holdings(uid, db, date=None):
 
 from fanbasemarket.queries.team import get_price
 
-def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}):
+def prev_ps(uid, end, prev_ps, prev_ss, start=None):
     if start is None:
-        previous_purchases = db.session.query(PurchaseTransaction).\
-            filter(PurchaseTransaction.user_id == uid).\
-            filter(PurchaseTransaction.date <= end).all()
-        previous_sales = db.session.query(Sale).\
-            filter(Sale.user_id == uid).\
-            filter(Sale.date <= end).all()
+        new_p = [p for p in prev_ps if p.date <= end]
+        new_s = [s for s in pewv_ss if s.date <= end]
     else:
-        previous_purchases = db.session.query(PurchaseTransaction).\
-            filter(PurchaseTransaction.user_id == uid).\
-            filter(PurchaseTransaction.date <= end).\
-            filter(PurchaseTransaction.date > start).all()
-        previous_sales = db.session.query(Sale).\
-            filter(Sale.user_id == uid).\
-            filter(Sale.date <= end).\
-            filter(Sale.date > start).all()
+        new_p = [p for p in prev_ps if p.date <= end and p.date > start]
+        new_s = [s for s in pewv_ss if s.date <= end and s.date > start]
+    return new_p, new_s
+
+def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}):
+    previous_purchases, previous_sales = prev_ps(uid, end, db, start=start)
     last_date = end
-    new = {}
 
     net_spend = 0
     for purchase in previous_purchases:
@@ -100,6 +93,10 @@ def get_leaderboard(db):
 
 def get_user_graph_points(uid, db):
     x_values_dict = get_graph_x_values()
+    prev_ps = db.session.query(PurchaseTransaction).\
+        filter(PurchaseTransaction.user_id == uid).all()
+    prev_ss = db.session.query(Sale).\
+        filter(Sale.user_id == uid).all()
     data_points = []
     data_points = {}
     for k, x_values in x_values_dict.items():
