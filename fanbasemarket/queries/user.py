@@ -67,7 +67,7 @@ def get_assets_in_date_range(uid, previous_balance, end, prev_ps, prev_ss, db, s
     assets = 0
     for abr, amt in prev.items():
         tm = db.session.query(Team).filter(Team.abr == abr).first()
-        price = db.session.query(Teamprice).filter(Teamprice.team_id == tm.id).filter(Teamprice.date <= date).order_by(Teamprice.date.desc()).first()
+        price = db.session.query(Teamprice).filter(Teamprice.team_id == tm.id).filter(Teamprice.date <= last_date).order_by(Teamprice.date.desc()).first()
         assets += price * amt
 
     return last_date, funds + assets, funds
