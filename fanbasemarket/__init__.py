@@ -13,6 +13,7 @@ from flask_socketio import SocketIO, emit
 from flask_apscheduler import APScheduler
 from os import getenv
 from warnings import filterwarnings
+from flask.ext.cache import Cache
 
 import pandas as pd
 import string
@@ -59,6 +60,8 @@ def teardown_db(exc):
     db = g.pop('db', None)
     if db is not None:
         db.session.remove()
+
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 from fanbasemarket.routes.auth import auth
 from fanbasemarket.routes.users import users
