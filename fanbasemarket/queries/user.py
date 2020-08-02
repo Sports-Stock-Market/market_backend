@@ -42,10 +42,9 @@ def prev_ps(uid, end, prev_ps, prev_ss, start=None):
         new_s = [s for s in pewv_ss if s.date <= end and s.date > start]
     return new_p, new_s
 
-def get_assets_in_date_range(uid, previous_balance, end, db, start=None, prev={}):
-    previous_purchases, previous_sales = prev_ps(uid, end, db, start=start)
+def get_assets_in_date_range(uid, previous_balance, end, prev_ps, prev_ss, db, start=None, prev={}):
+    previous_purchases, previous_sales = prev_ps(uid, end, prev_ps, prev_ss, start=start)
     last_date = end
-
     net_spend = 0
     for purchase in previous_purchases:
         abr = db.session.query(Team).filter(Team.id == purchase.team_id).first().abr
@@ -102,10 +101,10 @@ def get_user_graph_points(uid, db):
     for k, x_values in x_values_dict.items():
         data_points[k] = []
         prev = {}
-        initial_date, val, funds = get_assets_in_date_range(uid, 50000, x_values[0], db, prev=prev)
+        initial_date, val, funds = get_assets_in_date_range(uid, 50000, x_values[0], prev_ps, prev_ss, db, prev=prev)
         data_points[k].append({'date': str(initial_date), 'price': val})
         for i, x_val in enumerate(x_values[:-1]):
-            date, val, funds = get_assets_in_date_range(uid, funds, x_values[i + 1], db, start=x_val, prev=prev)
+            date, val, funds = get_assets_in_date_range(uid, funds, x_values[i + 1], perv_ps, prev_ss, db, start=x_val, prev=prev)
             date_s = str(date)
             data_points[k].append({'date': date_s, 'price': val})
     return data_points
