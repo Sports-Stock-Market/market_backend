@@ -36,10 +36,10 @@ from fanbasemarket.queries.team import get_price
 def prev_prchs(uid, end, prev_ps, prev_ss, start=None):
     if start is None:
         new_p = [p for p in prev_ps if EST.localize(p.date) <= end]
-        new_s = [s for s in pewv_ss if EST.localize(s.date) <= end]
+        new_s = [s for s in prev_ss if EST.localize(s.date) <= end]
     else:
         new_p = [p for p in prev_ps if EST.localize(p.date) <= end and EST.localize(p.date) > start]
-        new_s = [s for s in pewv_ss if EST.localize(s.date) <= end and EST.localize(s.date) > start]
+        new_s = [s for s in prev_ss if EST.localize(s.date) <= end and EST.localize(s.date) > start]
     return new_p, new_s
 
 def get_assets_in_date_range(uid, previous_balance, end, prev_ps, prev_ss, db, start=None, prev={}):
