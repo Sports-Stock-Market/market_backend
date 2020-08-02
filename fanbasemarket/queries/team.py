@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from fanbasemarket.models import Teamprice, Player, Purchase, Team
 from fanbasemarket.queries.utils import get_graph_x_values
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from pytz import timezone
 
 EST = timezone('US/Eastern')
