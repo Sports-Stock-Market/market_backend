@@ -11,26 +11,25 @@ from pytz import timezone
 
 EST = timezone('US/Eastern')
 
-def get_price(prev_prices, date=None):
-    if not date:
-        return prev_prices[-1]
-    if date >= EST.localize(prev_prices[-1].date):
-        return prev_prices[-1].elo
-    ix = 0
-    dt = EST.localize(prev_prices[ix].date)
-    while dt <= date:
-        ix += 1
-        dt = EST.localize(prev_prices[ix].date)
-    return prev_prices[ix - 1].elo
+def get_price(tid, date=None):
+    if date is None:
+        return db.session.query(Teamprice).\
+            filter(Teamprice.team_id == tid).\
+            order_by(Teamprice.date.desc()).\
+            first().elo
+    return db.session.query(Teamprice).\
+        filter(Teamprice.team_id == tid).\
+        filter(Teamprice.date <= date).\
+        order_by(Teamprice.date.desc()).\
+        first().elo
 
 def get_team_graph_points(tid, db):
     x_values_dict = get_graph_x_values()
-    previous_prices = db.session.query(Teamprice).filter(Teamprice.team_id == tid).all()
     data_points = {}
     for k, x_values in x_values_dict.items():
         l = []
         for x_val in x_values:
-            price = get_price(previous_prices, date=x_val)
+            price = get_price(tid, date=x_val)
             l.append({'date': str(x_val), 'price': price})
         data_points[k] = l
     return data_points
