@@ -45,17 +45,17 @@ def get_all_team_data(db):
         prev_prices = db.session.query(Teamprice).\
             filter(Teamprice.team_id == team.id).all()
         d['graph'] = {}
-        d['graph']['SZN'] = [{'date': str(date), 'price': price} \
-                             for date, price in prev_prices]
-        d['graph']['1M'] = [{'date': str(date), 'price': price} \
-                            for date, price in prev_prices if \
-                            date + timedelta(weeks=4) >= now]
-        d['graph']['1W'] = [{'date': str(date), 'price': price} \
-                            for date, price in prev_prices if \
-                            date + timedelta(weeks=1) >= now]
-        d['graph']['1D'] = [{'date': str(date), 'price': price} \
-                            for date, price in prev_prices if \
-                            date + timedelta(days=1) >= now]
+        d['graph']['SZN'] = [{'date': str(price.date), 'price': price.elo} \
+                             for price in prev_prices]
+        d['graph']['1M'] = [{'date': str(price.date), 'price': price.elo} \
+                            for price in prev_prices if \
+                            price.elo + timedelta(weeks=4) >= now]
+        d['graph']['1W'] = [{'date': str(price.date), 'price': price.elo} \
+                            for price in prev_prices if \
+                            price.date + timedelta(weeks=1) >= now]
+        d['graph']['1D'] = [{'date': str(price.date), 'price': price.elo} \
+                            for price in prev_prices if \
+                            price.date + timedelta(days=1) >= now]
         payload[team.abr] = d
     return payload
 
