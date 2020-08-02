@@ -34,6 +34,31 @@ def get_team_graph_points(tid, db):
         data_points[k] = l
     return data_points
 
+def get_all_team_data(db):
+    payload = {}
+    all_teams = db.session.query(Team).all()
+    now = EST.localize(datetime.now())
+    for team in all_teams:
+        d = {}
+        d['name'] = team.name
+        d['price'] = team.price
+        prev_prices = db.session.query(Teamprice).\
+            filter(Teamprice.team_id == team.id)
+        d['graph'] = {}
+        d['graph']['SZN'] = [{'date': str(date), 'price': price} \
+                             for date, price in prev_prices]
+        d['graph']['1M'] = [{'date': str(date), 'price': price} \
+                            for date, price in prev_prices if \
+                            date + timedelta(weeks=4) >= now]
+        d['graph']['1W'] = [{'date': str(date), 'price': price} \
+                            for date, price in prev_prices if \
+                            date + timedelta(weeks=1) >= now]
+        d['graph']['1D'] = [{'date': str(date), 'price': price} \
+                            for date, price in prev_prices if \
+                            date + timedelta(days=1) >= now]
+        payload[team.abr] = d
+    return payload
+
 def update_teamPrice(team, delta, dt, db):
     # delta_prime = delta - team.delta
     newprice = team.price + delta
