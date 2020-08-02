@@ -33,7 +33,7 @@ def get_active_holdings(uid, db, date=None):
 
 from fanbasemarket.queries.team import get_price
 
-def prev_ps(uid, end, prev_ps, prev_ss, start=None):
+def prev_prchs(uid, end, prev_ps, prev_ss, start=None):
     if start is None:
         new_p = [p for p in prev_ps if p.date <= end]
         new_s = [s for s in pewv_ss if s.date <= end]
@@ -43,7 +43,7 @@ def prev_ps(uid, end, prev_ps, prev_ss, start=None):
     return new_p, new_s
 
 def get_assets_in_date_range(uid, previous_balance, end, prev_ps, prev_ss, db, start=None, prev={}):
-    previous_purchases, previous_sales = prev_ps(uid, end, prev_ps, prev_ss, start=start)
+    previous_purchases, previous_sales = prev_prchs(uid, end, prev_ps, prev_ss, start=start)
     last_date = end
     net_spend = 0
     for purchase in previous_purchases:
