@@ -36,23 +36,23 @@ def get_all_team_data(db):
     payload = {}
     all_teams = db.session.query(Team).all()
     now = datetime.now(EST)
-    prev_prices = db.session.query(Teamprice).all()
     for team in all_teams:
         d = {}
         d['name'] = team.name
         d['price'] = {'price': team.price}
-        ps_for_team = [p for p in prev_prices if p.team_id == team.id]
+        prev_prices = db.session.query(Teamprice).\
+            filter(Teamprice.team_id == team.id).all()
         d['graph'] = {}
         d['graph']['SZN'] = [{'date': str(price.date), 'price': price.elo} \
-                             for price in ps_for_team]
+                             for price in prev_prices]
         d['graph']['1M'] = [{'date': str(price.date), 'price': price.elo} \
-                            for price in ps_for_team if \
+                            for price in prev_prices if \
                             EST.localize(price.date) + timedelta(weeks=4) >= now]
         d['graph']['1W'] = [{'date': str(price.date), 'price': price.elo} \
-                            for price in ps_for_team if \
+                            for price in prev_prices if \
                             EST.localize(price.date) + timedelta(weeks=1) >= now]
         d['graph']['1D'] = [{'date': str(price.date), 'price': price.elo} \
-                            for price in ps_for_team if \
+                            for price in prev_prices if \
                             EST.localize(price.date) + timedelta(hours=24) >= now]
         d['graph']['1D'].append(d['price'])
         if len(d['graph']['1D']) == 1:
