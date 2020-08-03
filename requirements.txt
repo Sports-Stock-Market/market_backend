@@ -18,4 +18,3 @@ matplotlib
 mysqlclient
 psycopg2
 eventlet
-Flask-Caching
