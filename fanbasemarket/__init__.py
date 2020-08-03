@@ -13,7 +13,7 @@ from flask_socketio import SocketIO, emit
 from flask_apscheduler import APScheduler
 from os import getenv
 from warnings import filterwarnings
-from flask.ext.cache import Cache
+from flask_caching import Cache
 
 import pandas as pd
 import string
