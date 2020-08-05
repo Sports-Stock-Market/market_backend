@@ -142,7 +142,6 @@ def generate_user_graph(uid, db):
             if tid in holdings:
                 amt = holdings[tid][0]
                 prev = holdings[tid][1]
-                funds += amt * (milestone['price'] - prev)
                 holdings[tid][1] = milestone['price']
                 assets = funds
                 for _, val in holdings.items():
