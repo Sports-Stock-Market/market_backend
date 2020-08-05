@@ -12,8 +12,8 @@ EST = timezone('US/Eastern')
 generate_url = lambda s: f'http://data.nba.net/10s/prod/v1/{s}/scoreboard.json'
 
 def bigboy_pulls_only(db):
-    k = 45
-    h = 80
+    k = 75
+    h = 10
     today = datetime.now(EST)
     url = generate_url(today.strftime('%Y%m%d'))
     games = get(url).json()['games']
@@ -76,7 +76,7 @@ def bigboy_pulls_only(db):
         else:
             time_elapsed = 48 + ((period - 4) * 5 - since_period)
         
-        live_prob = liveGame(time_elapsed, score_margin, i_home_win_prob, period)
+        live_prob = liveGame(time_elapsed, score_margin, i_home_win_prob * 100, period)
         if score_margin > 0:
             proj_mov = score_margin * live_prob/100
         else:
