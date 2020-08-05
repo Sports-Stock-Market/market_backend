@@ -122,6 +122,7 @@ def generate_user_graph(uid, db):
         prices = db.session.query(Teamprice).filter(Teamprice.team_id == team.id).all()
         milestones += [{'type': 'PRICE', 'tid': team.id, 'date': EST.localize(p.date), 'price': p.elo} for p in prices]
     milestones = sorted(milestones, key=lambda x: x['date'])
+    print(milestones[:10])
     points = []
     holdings = {}
     funds = 50000.0
