@@ -8,7 +8,7 @@ from fanbasemarket import app, get_db
 from fanbasemarket.models import Purchase, User, Teamprice, Team
 from fanbasemarket.queries.team import get_price
 from fanbasemarket.queries.user import get_active_holdings, get_user_graph_points, \
-                                       get_leaderboard
+                                       get_leaderboard, generate_user_graph
 from fanbasemarket.routes.utils import bad_request, ok
 from fanbasemarket.queries.user import buy_shares, sell_shares
 
@@ -55,7 +55,7 @@ def gen_usrPg():
                 t = Team.query.filter(Team.abr == abr).first()
                 total += p['num_shares'] * t.price
         payload['total_assets'] = total
-        payload['graphData'] = get_user_graph_points(uid, db)
+        payload['graphData'] = generate_user_graph(uid, db)
         for k in payload['graphData'].keys():
             payload['graphData'][k].append({'date': date, 'price': total})
         return ok(payload)

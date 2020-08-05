@@ -109,6 +109,45 @@ def get_user_graph_points(uid, db):
             data_points[k].append({'date': date_s, 'price': val})
     return data_points
 
+def generate_user_graph(uid, db):
+    now = datetime.now(EST)
+    milestones = []
+    sales = db.session.query(Sale).\
+        filter(Sale.user_id == uid)
+    milestones += [{'type': 'SALE', 'tid': s.team_id, 'date': EST.localize(s.date), 'amt': s.amt_sold, 'for': s.sold_for} for s in sales]
+    ps = db.session.query(PurchaseTransaction).\
+        filter(Sale.user_id == uid)
+    milestones += [{'type': 'PURCHASE', 'tid': p.team_id, 'date': EST.localize(p.date), 'amt': p.amt_purchased, 'for': p.purchased_for} for p in purchases]
+    for team in db.session.query(Team).all():
+        prices = db.session.query(Teamprice).filter(Teamprice.team_id == team.id).all()
+        milestones += [{'type': 'PRICE', 'tid': team.id, 'date': EST.localize(p.date), 'price': p.elo} for p in prices]
+    milestones = sorted(milestones, key=lambda x: x['date'])
+    points = []
+    holdings = {}
+    funds = 50000.0
+    for milestone in milestones:
+        tid = milestone['tid']
+        if milestone['type'] == 'PURCHASE'
+            pfor = milestone['for']
+            if tid not in holdings:
+                holdings[tid] = [0, pfor]
+            holdings[tid] += milestone['amt']
+        elif milestone['type'] == 'SALE':
+            holdings[tid] -= milestone['amt']
+        else:
+            if tid in holdings:
+                amt = holdings[tid][0]
+                prev = holdings[tid][1]
+                funds += amt * (milestone['price'] - prev)
+                holdings[tid][1] = milestone['price']
+                points.append({'date': milestone['date'], 'price': funds})
+    graph = {}
+    graph['1D'] = [point for point in points if point['date'] + timedelta(hours=24) >= now]
+    graph['1W'] = [point for point in points if point['date'] + timedelta(days=7) >= now]
+    graph['1M'] = [point for point in points if point['date'] + timedelta(weeks=4) >= now]
+    graph['SZN'] = points
+    return graph
+
 def buy_shares(usr, abr, num_shares, db):
     team = db.session.query(Team).filter(Team.abr == abr).first()
     price = num_shares * team.price * 1.005
