@@ -134,7 +134,7 @@ def generate_user_graph(uid, db):
             funds -= pfor * milestone['amt']
             holdings[tid][0] += milestone['amt']
             print('PURCHASE')
-            print(holdings[tid][0], holdingss[tid][1])
+            print(holdings[tid][0], holdings[tid][1])
             print(funds)
             print('=========')
         elif milestone['type'] == 'SALE':
@@ -143,7 +143,7 @@ def generate_user_graph(uid, db):
             holdings[tid][0] -= milestone['amt']
             holdings[tid][1] = sfor
             print('SALE')
-            print(holdings[tid][0], holdingss[tid][1])
+            print(holdings[tid][0], holdings[tid][1])
             print(funds)
             print('========')
         else:
