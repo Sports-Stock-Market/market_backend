@@ -145,11 +145,11 @@ def generate_user_graph(uid, db):
                 points.append((milestone['date'], funds))
     graph = {}
     graph['1D'] = [{'date': str(point[0]), 'price': point[1]} for point in points if \
-                   point['date'] + timedelta(hours=24) >= now]
+                   point[0] + timedelta(hours=24) >= now]
     graph['1W'] = [{'date': str(point[0]), 'price': point[1]} for point in points if \
-                   point['date'] + timedelta(days=7) >= now]
+                   point[0] + timedelta(days=7) >= now]
     graph['1M'] = [{'date': str(point[0]), 'price': point[1]} for point in points if \
-                   point['date'] + timedelta(weeks=4) >= now]
+                   point[0] + timedelta(weeks=4) >= now]
     graph['SZN'] = [{'date': str(point[0]), 'price': point[1]} for point in points]
     return graph
 
