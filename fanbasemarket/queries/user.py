@@ -145,7 +145,7 @@ def generate_user_graph(uid, db):
                 holdings[tid][1] = milestone['price']
                 assets = funds
                 for _, val in holdings.items():
-                    assets += holdings[0] * holdings[1]
+                    assets += val[0] * val[1]
                 points.append((milestone['date'], assets))
     graph = {}
     graph['1D'] = [{'date': str(point[0]), 'price': point[1]} for point in points if \
