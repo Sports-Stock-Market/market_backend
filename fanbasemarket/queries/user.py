@@ -122,7 +122,6 @@ def generate_user_graph(uid, db):
         prices = db.session.query(Teamprice).filter(Teamprice.team_id == team.id).all()
         milestones += [{'type': 'PRICE', 'tid': team.id, 'date': EST.localize(p.date), 'price': p.elo} for p in prices]
     milestones = sorted(milestones, key=lambda x: x['date'])
-    print(milestones[:10])
     points = []
     holdings = {}
     funds = 50000.0
@@ -132,9 +131,11 @@ def generate_user_graph(uid, db):
             pfor = milestone['for']
             if tid not in holdings:
                 holdings[tid] = [0, pfor]
+            funds -= pfor
             holdings[tid][0] += milestone['amt']
         elif milestone['type'] == 'SALE':
             sfor = milestone['for']
+            funds += sfor
             holdings[tid][0] -= milestone['amt']
             holdings[tid][1] = sfor
         else:
@@ -143,7 +144,10 @@ def generate_user_graph(uid, db):
                 prev = holdings[tid][1]
                 funds += amt * (milestone['price'] - prev)
                 holdings[tid][1] = milestone['price']
-                points.append((milestone['date'], funds))
+                assets = funds
+                for _, val in holdings.items():
+                    assets += holdings[0] * holdings[1]
+                points.append((milestone['date'], assets))
     graph = {}
     graph['1D'] = [{'date': str(point[0]), 'price': point[1]} for point in points if \
                    point[0] + timedelta(hours=24) >= now]
