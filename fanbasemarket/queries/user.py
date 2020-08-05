@@ -148,6 +148,7 @@ def generate_user_graph(uid, db):
                     for _, val in holdings.items():
                         assets += val[0] * val[1]
                     points.append((milestone['date'], assets))
+        print(funds)
     graph = {}
     graph['1D'] = [{'date': str(point[0]), 'price': point[1]} for point in points if \
                    point[0] + timedelta(hours=24) >= now]
