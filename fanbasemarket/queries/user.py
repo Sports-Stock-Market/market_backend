@@ -142,12 +142,15 @@ def generate_user_graph(uid, db):
                 prev = holdings[tid][1]
                 funds += amt * (milestone['price'] - prev)
                 holdings[tid][1] = milestone['price']
-                points.append({'date': milestone['date'], 'price': funds})
+                points.append((milestone['date'], funds))
     graph = {}
-    graph['1D'] = [point for point in points if point['date'] + timedelta(hours=24) >= now]
-    graph['1W'] = [point for point in points if point['date'] + timedelta(days=7) >= now]
-    graph['1M'] = [point for point in points if point['date'] + timedelta(weeks=4) >= now]
-    graph['SZN'] = points
+    graph['1D'] = [{'date': str(point[0]), 'price': point[1]} for point in points if \
+                   point['date'] + timedelta(hours=24) >= now]
+    graph['1W'] = [{'date': str(point[0]), 'price': point[1]} for point in points if \
+                   point['date'] + timedelta(days=7) >= now]
+    graph['1M'] = [{'date': str(point[0]), 'price': point[1]} for point in points if \
+                   point['date'] + timedelta(weeks=4) >= now]
+    graph['SZN'] = [{'date': str(point[0]), 'price': point[1]} for point in points]
     return graph
 
 def buy_shares(usr, abr, num_shares, db):
