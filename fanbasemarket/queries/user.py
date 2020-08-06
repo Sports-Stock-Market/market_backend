@@ -214,8 +214,8 @@ def unshort_team(usr, abr, num_shares, db):
         to_del = min(p.amt_shorted, left_to_delete)
         if to_del == p.amt_shorted:
             p.exists = False
-            p.sold_at = now
-            p.sold_for = team.price * 1.0025
+            p.unshorted_at = now
+            p.unshorted_for = team.price * 1.0025
         else:
             p.amt_shorted -= to_del
         loc = db.session.merge(p)
