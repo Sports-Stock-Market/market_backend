@@ -5,7 +5,6 @@ from sqlalchemy import and_, not_
 from pytz import timezone
 from flask_socketio import emit
 
-from fanbasemarket.queries.team import update_teamPrice
 from fanbasemarket.models import Purchase, User, Team, Sale, PurchaseTransaction, Teamprice, \
                                  Short, ShortTransaction, Unshort
 
@@ -30,6 +29,8 @@ def get_active_holdings(uid, db, date=None):
         else:
             holdings[tm.abr].append(res)
     return holdings
+
+from fanbasemarket.queries.team import update_teamPrice
 
 def prev_prchs(uid, end, prev_ps, prev_ss, start=None):
     if start is None:
@@ -223,7 +224,7 @@ def unshort_team(usr, abr, num_shares, db):
         db.session.commit()
         left_to_delete -= to_del
         ix += 1
-    usr.available_funds += price
+    usr.available_funds -= price
     loc_u = db.session.merge(usr)
     db.session.add(loc_u)
     db.session.commit()

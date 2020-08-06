@@ -93,7 +93,7 @@ def make_sale():
 @users.route('short', methods=['POST'])
 @cross_origin('*')
 @jwt_required
-def make_sale():
+def make_short():
     uname = get_jwt_identity()
     with app.app_context():
         db = get_db()
@@ -108,7 +108,7 @@ def make_sale():
 @users.route('unshort', methods=['POST'])
 @cross_origin('*')
 @jwt_required
-def make_sale():
+def make_unshort():
     uname = get_jwt_identity()
     with app.app_context():
         db = get_db()
