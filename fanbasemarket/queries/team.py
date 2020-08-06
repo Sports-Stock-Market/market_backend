@@ -1,7 +1,8 @@
 from sqlalchemy import desc
 
 from sqlalchemy.ext.declarative import declarative_base
-from fanbasemarket.models import Teamprice, Player, Purchase, Team
+from fanbasemarket.models import Teamprice, Player, Purchase, Team, \
+                                 Short
 
 from datetime import datetime, timedelta
 from pytz import timezone
@@ -79,6 +80,11 @@ def get_user_position(team, user, db):
         filter(Purchase.team_id == team.id).\
         filter(Purchase.exists == True).\
         all()
+    shorts = db.session.query(Short).\
+        filter(Short.user_id == user.id).\
+        filter(Short.team_id == team.id).\
+        filter(Short.exists == True).\
+        all()
     values = [h.purchased_for for h in holdings]
     if len(values) > 0:
         bought_at = sum(values) / len(values)
@@ -101,4 +107,15 @@ def get_user_position(team, user, db):
     d['bought_at'] = bought_at
     d['num_shares'] = num_shares
     d['weight'] = weight
+    d['short'] = {}
+    shorted_for = 0
+    values = [s.shorted_for for s in shorts]
+    if len(values) > 0:    
+        shorted_for = sum(values) / len(values)
+    else:
+        shorted_for = 0
+    num_shorted = sum([s.amt_shorted for s in shorts])
+    if len(values) != 0:
+        d['short']['num_shorted'] = num_shorted
+        d['short']['shorted_for'] = shorted_for
     return d
