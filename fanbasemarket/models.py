@@ -73,24 +73,6 @@ class Purchase(db.Model):
                       'purchased_at': self.purchased_at,
                       'purchased_for': self.purchased_for})
 
-
-class Short(db.Model):
-    __tablename__ = 'short'
-    id = db.Column(db.Integer, primary_key=True)
-    team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    shorted_at = db.Column(db.DateTime)
-    shorted_for = db.Column(db.Float)
-    expires_at = db.Column(db.DateTime)
-
-    def serialize(self):
-        return dumps({'id': self.id, 'team_id': self.team_id,
-                      'user_id': self.user_id,
-                      'shorted_at': self.shorted_at,
-                      'shorted_for': self.shorted_for,
-                      'expires_at': self.expires_at})
-
-
 class Teamprice(db.Model):
     __tablename__ = 'teamprice'
     id = db.Column(db.Integer, primary_key=True)
@@ -153,3 +135,33 @@ class PurchaseTransaction(db.Model):
     purchased_for = db.Column(db.Float)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     amt_purchased = db.Column(db.Integer)
+
+class Short(db.Model):
+    __tablename__ = 'short'
+    id = db.Column(db.Integer, primary_key=True)
+    team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    shorted_for = db.Column(db.Float)
+    shorted_at = db.Column(db.DateTime)
+    exists = db.Column(db.Boolean, default=True)
+    unshorted_at = db.Column(db.DateTime)
+    unshorted_for = db.Column(db.Float)
+    amt_shorted = db.Column(db.Integer)
+
+class ShortTransaction(db.Model):
+    __tablename__ = 'shorttransaction'
+    id = db.Column(db.Integer, primary_key=True)
+    team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    shorted_for = db.Column(db.Float)
+    shorted_at = db.Column(db.DateTime)
+    amt_shorted = db.Column(db.Integer)
+
+class Unshort(db.Model):
+    __tablename__ = 'unshort'
+    id = db.Column(db.Integer, primary_key=True)
+    team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    unshorted_for = db.Column(db.Float)
+    unshorted_at = db.Column(db.DateTime)
+    amt_unshorted = db.Column(db.Integer)
