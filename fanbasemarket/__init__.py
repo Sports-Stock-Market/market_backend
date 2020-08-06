@@ -13,6 +13,7 @@ from flask_socketio import SocketIO, emit
 from flask_apscheduler import APScheduler
 from os import getenv
 from warnings import filterwarnings
+from flask_migrate import Migrate
 
 import pandas as pd
 import string
@@ -46,8 +47,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
 io = SocketIO(app, cors_allowed_origins='*')
-
 executor = Executor(app)
+
+from fanbasemarket.models import *
+migrate = Migrate(app, db)
 
 def get_db():
     if 'db' not in g:
