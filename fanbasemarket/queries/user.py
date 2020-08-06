@@ -117,6 +117,7 @@ def generate_user_graph(uid, db):
     milestones += [{'type': 'SALE', 'tid': s.team_id, 'date': EST.localize(s.date), 'amt': s.amt_sold, 'for': s.sold_for} for s in sales]
     ps = db.session.query(PurchaseTransaction).\
         filter(Sale.user_id == uid).all()
+    print(len(ps))
     milestones += [{'type': 'PURCHASE', 'tid': p.team_id, 'date': EST.localize(p.date), 'amt': p.amt_purchased, 'for': p.purchased_for} for p in ps]
     for team in db.session.query(Team).all():
         prices = db.session.query(Teamprice).filter(Teamprice.team_id == team.id).all()
