@@ -133,7 +133,7 @@ def generate_user_graph(uid, db):
                 holdings[tid] = [0, pfor]
             funds -= pfor * milestone['amt']
             holdings[tid][0] += milestone['amt']
-            print(holdings)
+            holdings[tid][1] = pfor
         elif milestone['type'] == 'SALE':
             sfor = milestone['for']
             funds += sfor * milestone['amt']
@@ -141,14 +141,11 @@ def generate_user_graph(uid, db):
             holdings[tid][1] = sfor
         else:
             if tid in holdings:
-                if holdings[tid][0] > 0:
-                    amt = holdings[tid][0]
-                    prev = holdings[tid][1]
-                    holdings[tid][1] = milestone['price']
-                    assets = funds
-                    for _, val in holdings.items():
-                        assets += val[0] * val[1]
-                    points.append((milestone['date'], assets))
+                holdings[tid][1] = milestone['price']
+                assets = funds
+                for _, val in holdings.items():
+                    assets += val[0] * val[1]
+                points.append((milestone['date'], assets))
     graph = {}
     graph['1D'] = [{'date': str(point[0]), 'price': point[1]} for point in points if \
                    point[0] + timedelta(hours=24) >= now]
