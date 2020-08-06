@@ -153,8 +153,8 @@ class ShortTransaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    shorted_for = db.Column(db.Float)
-    shorted_at = db.Column(db.DateTime)
+    shorted_for = db.Column(db.Float, nullable=True)
+    shorted_at = db.Column(db.DateTime, nullable=True)
     amt_shorted = db.Column(db.Integer)
 
 class Unshort(db.Model):

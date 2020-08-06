@@ -2,35 +2,11 @@ from sqlalchemy import desc
 
 from sqlalchemy.ext.declarative import declarative_base
 from fanbasemarket.models import Teamprice, Player, Purchase, Team
-from fanbasemarket.queries.utils import get_graph_x_values
 
 from datetime import datetime, timedelta
 from pytz import timezone
 
 EST = timezone('US/Eastern')
-
-def get_price(tid, db, date=None):
-    if date is None:
-        return db.session.query(Teamprice).\
-            filter(Teamprice.team_id == tid).\
-            order_by(Teamprice.date.desc()).\
-            first().elo
-    return db.session.query(Teamprice).\
-        filter(Teamprice.team_id == tid).\
-        filter(Teamprice.date <= date).\
-        order_by(Teamprice.date.desc()).\
-        first().elo
-
-def get_team_graph_points(tid, db):
-    x_values_dict = get_graph_x_values()
-    data_points = {}
-    for k, x_values in x_values_dict.items():
-        l = []
-        for x_val in x_values:
-            price = get_price(tid, db, date=x_val)
-            l.append({'date': str(x_val), 'price': price})
-        data_points[k] = l
-    return data_points
 
 def get_all_team_data(db):
     payload = {}
@@ -56,12 +32,13 @@ def get_all_team_data(db):
                             EST.localize(price.date) + timedelta(hours=24) >= now]
         d['graph']['1D'].append(d['price'])
         if len(d['graph']['1D']) == 1:
-            d['graph']['1D'].append({'date': str(now - timedelta(hours=24)), 'price': d['price']['price']})
+            dt = str(now - timedelta(hours=24))
+            p = d['price']['price']
+            d['graph']['1D'].append({'date': dt, 'price': p})
         payload[team.abr] = d
     return payload
 
 def update_teamPrice(team, delta, dt, db):
-    # delta_prime = delta - team.delta
     newprice = team.price + delta
     team.prev_price = team.price
     team.price = newprice
@@ -91,7 +68,7 @@ def set_player_rating(team, db):
 def active_player_rating(team, db):
     active_ps = db.session.query(Player).filter(Player.team_id == team.id).\
         filter(Player.is_injured == False).\
-            all()
+        all()
     return sum([player.rating * player.mpg for player in active_ps])
 
 from fanbasemarket.queries.user import get_active_holdings
@@ -112,7 +89,8 @@ def get_user_position(team, user, db):
     all_holdings = get_active_holdings(user.id, db, date=date)
     total_val = 0
     for abr, purchases in all_holdings.items():
-        tm = db.session.query(Team).filter(Team.abr == abr).first()
+        tm = db.session.query(Team).\
+            filter(Team.abr == abr).first()
         for purchase in purchases:
             total_val += tm.price * purchase['num_shares']
     if total_val != 0:

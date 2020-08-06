@@ -6,9 +6,9 @@ from pytz import timezone
 
 from fanbasemarket import app, get_db
 from fanbasemarket.models import Purchase, User, Teamprice, Team
-from fanbasemarket.queries.team import get_price
-from fanbasemarket.queries.user import get_active_holdings, get_user_graph_points, \
-                                       get_leaderboard, generate_user_graph
+from fanbasemarket.queries.user import get_active_holdings, get_leaderboard, \
+                                       generate_user_graph, short_team, \
+                                       unshort_team
 from fanbasemarket.routes.utils import bad_request, ok
 from fanbasemarket.queries.user import buy_shares, sell_shares
 
@@ -86,6 +86,36 @@ def make_sale():
         js = request.get_json()
         try:
             res = sell_shares(usr, js['abr'], int(js['num_shares']), db)
+            return ok(res)
+        except ValueError as e:
+            return bad_request(str(e))
+
+@users.route('short', methods=['POST'])
+@cross_origin('*')
+@jwt_required
+def make_sale():
+    uname = get_jwt_identity()
+    with app.app_context():
+        db = get_db()
+        usr = User.query.filter(User.username == uname).first()
+        js = request.get_json()
+        try:
+            res = short_team(usr, js['abr'], int(js['num_shares']), db)
+            return ok(res)
+        except ValueError as e:
+            return bad_request(str(e))
+
+@users.route('unshort', methods=['POST'])
+@cross_origin('*')
+@jwt_required
+def make_sale():
+    uname = get_jwt_identity()
+    with app.app_context():
+        db = get_db()
+        usr = User.query.filter(User.username == uname).first()
+        js = request.get_json()
+        try:
+            res = unshort_team(usr, js['abr'], int(js['num_shares']), db)
             return ok(res)
         except ValueError as e:
             return bad_request(str(e))

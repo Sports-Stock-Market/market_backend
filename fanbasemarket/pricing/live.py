@@ -2,7 +2,7 @@ from requests import get
 from nba_api.stats.static import teams
 from fanbasemarket.pricing.nba_data import liveGame, mov_multiplier
 from fanbasemarket.queries.team import update_teamPrice, set_teamPrice
-from fanbasemarket.models import Team, Teamprice, Purchase, Sale
+from fanbasemarket.models import Team, Teamprice, Purchase, Sale, ShortTransaction, Unshort
 from datetime import datetime
 from dateutil import parser
 from pytz import timezone
@@ -56,8 +56,14 @@ def bigboy_pulls_only(db):
             elif str(team['abbreviation']) == away_abv:
                 away_team = str([team["nickname"]])
                 prices[away_team] = 0
-        home_elo = Teamprice.query.filter(Teamprice.team_id == home_tObj.id).filter(Teamprice.date <= i['start']).all()[-1].elo
-        away_elo = Teamprice.query.filter(Teamprice.team_id == away_tObj.id).filter(Teamprice.date <= i['start']).all()[-1].elo
+        home_elo = Teamprice.query.\
+            filter(Teamprice.team_id == home_tObj.id).\
+            filter(Teamprice.date <= i['start']).\
+            all()[-1].elo
+        away_elo = Teamprice.query.\
+            filter(Teamprice.team_id == away_tObj.id).\
+            filter(Teamprice.date <= i['start']).\
+            all()[-1].elo
         i_home_win_prob = 1/(1+10**((away_elo - home_elo - h)/400))
         i_away_win_prob = 1 - i_home_win_prob
         if ':' in clock:
@@ -86,7 +92,9 @@ def bigboy_pulls_only(db):
         
         new_homeElo = home_elo + elo_change
         new_awayElo = away_elo - elo_change
-        ps_during_game = Purchase.query.filter(Purchase.purchased_at <= today).filter(Purchase.purchased_at >= i['start'])
+        ps_during_game = Purchase.query.\
+            filter(Purchase.purchased_at <= today).\
+            filter(Purchase.purchased_at >= i['start'])
         home_ps = len(ps_during_game.filter(Purchase.team_id == home_tObj.id).all())
         away_ps = len(ps_during_game.filter(Purchase.team_id == away_tObj.id).all())
         ss_during_game = Sale.query.\
@@ -94,8 +102,20 @@ def bigboy_pulls_only(db):
             filter(Sale.date >= i['start'])
         home_ss = len(ss_during_game.filter(Sale.team_id == home_tObj.id).all())
         away_ss = len(ss_during_game.filter(Sale.team_id == away_tObj.id).all())
-        new_homeElo *= (1.005 ** (home_ps - home_ss))
-        new_awayElo *= (1.005 ** (away_ps - away_ss))
+        new_homeElo *= (1.0025 ** (home_ps - home_ss))
+        new_awayElo *= (1.0025 ** (away_ps - away_ss))
+        shorts_during_game = ShortTransaction.query.\
+            filter(ShortTransaction.shorted_at <= today).\
+            filter(ShortTransaction.shorted_at >= i['start'])
+        unshorts_during_game = Unshort.query.\
+            filter(Unshort.unshorted_at <= today).\
+            filter(Unshort.unshorted_at >= i['start'])
+        home_shorts = len(shorts_during_game.filter(ShortTransaction.team_id == home_tObj.id).all())
+        away_shorts = len(shorts_during_game.filter(ShortTransaction.team_id == away_tObj.id).all())
+        home_unshorts = len(unshorts_during_game.filter(Unshort.team_id == home_tObj.id).all())
+        away_unshorts = len(unshorts_during_game.filter(Unshort.team_id == away_tObj.id).all())
+        new_homeElo *= (1.0025 ** (home_unshorts - home_shorts))
+        new_awayElo *= (1.0025 ** (away_unshorts - away_shorts))
         set_teamPrice(home_tObj, new_homeElo, today, db)
         results.append({home_abv: {'date': str(today), 'price': new_homeElo}})
         set_teamPrice(away_tObj, new_awayElo, today, db)

@@ -3,7 +3,7 @@ from flask_cors import CORS, cross_origin
 from fanbasemarket import app, get_db
 from fanbasemarket.models import Team, User
 from fanbasemarket.routes.utils import ok, bad_request
-from fanbasemarket.queries.team import get_team_graph_points, get_user_position, get_all_team_data
+from fanbasemarket.queries.team import get_user_position, get_all_team_data
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from pytz import timezone
 from datetime import datetime
