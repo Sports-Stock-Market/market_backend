@@ -129,6 +129,7 @@ def generate_user_graph(uid, db):
         tid = milestone['tid']
         if milestone['type'] == 'PURCHASE':
             pfor = milestone['for']
+            print(milestone['amt'])
             if tid not in holdings:
                 holdings[tid] = [0, pfor]
             funds -= pfor * milestone['amt']
