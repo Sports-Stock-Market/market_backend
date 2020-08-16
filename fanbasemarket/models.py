@@ -39,6 +39,7 @@ class Team(db.Model):
     fs_rating = db.Column(db.Float, default=0.0)
     rating = db.Column(db.Float, default=0.0)
     delta = db.Column(db.Float, default=0.0)
+    playoff_wins = db.Column(db.Integer, default=0)
 
     def serialize(self):
         return dumps({'id': self.id, 'name': self.name})
@@ -88,6 +89,7 @@ class Teamprice(db.Model):
 class Game(db.Model):
     __tablename__ = 'game'
     id = db.Column(db.Integer, primary_key=True)
+    gameid = db.Column(db.String, unique=True)
     home = db.Column(db.Integer, db.ForeignKey('team.id'))
     away = db.Column(db.Integer, db.ForeignKey('team.id'))
     home_score = db.Column(db.Integer, default=0)

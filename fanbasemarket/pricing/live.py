@@ -2,7 +2,7 @@ from requests import get
 from nba_api.stats.static import teams
 from fanbasemarket.pricing.nba_data import liveGame, mov_multiplier
 from fanbasemarket.queries.team import update_teamPrice, set_teamPrice
-from fanbasemarket.models import Team, Teamprice, Purchase, Sale, ShortTransaction, Unshort
+from fanbasemarket.models import Team, Teamprice, Purchase, Sale, ShortTransaction, Unshort, Game
 from datetime import datetime
 from dateutil import parser
 from pytz import timezone
@@ -22,6 +22,7 @@ def bigboy_pulls_only(db):
     ret = []
     for game in games:
         l = {}
+        l['id'] = game['gameId']
         l['start'] = str(parser.parse(game['startTimeUTC']).astimezone(EST))
         l['is_on'] = game['isGameActivated']
         l['arena'] = game['arena']['name']
@@ -38,14 +39,94 @@ def bigboy_pulls_only(db):
         ret.append(l)
     results = []
     for i in ret:
-        if not i['is_on']:
-            continue
-        if i['home_score'] == 0 and i['away_score'] == 0:
-            continue
         home_abv = i['home_team']
         away_abv = i['away_team']
         home_tObj = Team.query.filter(Team.abr == home_abv).first()
         away_tObj = Team.query.filter(Team.abr == away_abv).first()
+        if not i['is_on']:
+            if i['home_score'] != 0.0 or i['away_score'] != 0.0:
+                match = db.session.query(Game).\
+                    filter(Game.gameid == i['id']).\
+                    first()
+                if match is not None:
+                    continue
+                newgame = Game(gameid=i['id'], home=home_tObj.id, away=away_tObj.id, home_score=i['home_score'], away_score=i['away_score'], start=i['start'])
+                db.session.add(newgame)
+                db.session.commit()
+                if i['home_score'] > i['away_score']:
+                    home_tObj.playoff_wins += 1
+                    db.session.commit()
+                    winner = home_tObj
+                else:
+                    away_tObj.playoff_wins += 1
+                    db.session.commit()
+                    winner = away_tObj
+                # figure out which series we're in
+                starts = [
+                    datetime(year=2020, month=8, day=17, tzinfo=EST),
+                    datetime(year=2020, month=8, day=31, tzinfo=EST),
+                    datetime(year=2020, month=9, day=15, tzinfo=EST),
+                    datetime(year=2020, month=9, day=30, tzinfo=EST)
+                ]
+                ix = 0
+                while True:
+                    if starts[ix] > today:
+                        break
+                    ix += 1
+                startOfSeries = starts[ix]
+                purchases = db.session.query(Purchase).\
+                    filter(Purchase.purchased_at <= startOfSeries).\
+                    filter(Purchase.exists == True).\
+                    filter(Purchase.team_id == winner.id).\
+                    all()
+                price = winner.price
+                mult = 0
+                dividend = 100
+                if price >= 1800:
+                    dividend = 5
+                elif price >= 1700:
+                    dividend = 10
+                elif price >= 1650:
+                    dividend = 15
+                elif price >= 1600:
+                    dividend = 17.5
+                elif price >= 1550:
+                    dividend = 20
+                elif price >= 1500:
+                    dividend = 37.5
+                elif price >= 1450:
+                    dividend = 45
+                elif price >= 1400:
+                    dividend = 55
+                elif price >= 1350:
+                    dividend = 65
+                elif price >= 1300:
+                    dividend = 75
+                elif price >= 1250:
+                    dividend = 85
+                elif price >= 1200:
+                    dividend = 95
+                elif price >= 1150:
+                    dividend = 110
+                elif price >= 1100:
+                    dividend = 125
+                elif price >= 1050:
+                    dividend = 145
+                elif price >= 1000:
+                    dividend = 175
+                if (winner.playoff_wins % 4 == 0) and (winner.playoff_wins > 0):
+                    mult = (1 + (team.playoff_wins / 4))
+                dividend *= mult
+                if dividend > 0:
+                    for purchase in purchases:
+                        payoff = purchase.amt_shares * dividend
+                        usr = db.Session.query(User).\
+                            filter(User.id == purchase.user_id).\
+                            first()
+                        usr.available_funds += dividend
+                        db.session.commit()
+        if i['home_score'] == 0 and i['away_score'] == 0:
+            continue
         score_margin = i['score_margin']
         period = i['period']
         clock = i['clock']
