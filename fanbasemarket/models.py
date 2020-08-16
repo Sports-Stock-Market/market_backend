@@ -89,7 +89,7 @@ class Teamprice(db.Model):
 class Game(db.Model):
     __tablename__ = 'game'
     id = db.Column(db.Integer, primary_key=True)
-    gameid = db.Column(db.String, unique=True)
+    gameid = db.Column(db.String)
     home = db.Column(db.Integer, db.ForeignKey('team.id'))
     away = db.Column(db.Integer, db.ForeignKey('team.id'))
     home_score = db.Column(db.Integer, default=0)
