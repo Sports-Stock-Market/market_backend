@@ -54,10 +54,14 @@ def bigboy_pulls_only(db):
                 db.session.add(newgame)
                 db.session.commit()
                 if i['home_score'] > i['away_score']:
-                    home_tObj.playoff_wins += 1
+                    if home_tObj.playoff_wins is None:
+                        home_tObj.playoff_wins = 0
+                    home_tObj.playoff_wins = 1
                     db.session.commit()
                     winner = home_tObj
                 else:
+                    if away_tObj.playoff_wins is None:
+                        away_tObj.playoff_wins = 0
                     away_tObj.playoff_wins += 1
                     db.session.commit()
                     winner = away_tObj
