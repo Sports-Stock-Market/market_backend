@@ -129,6 +129,7 @@ def bigboy_pulls_only(db):
                             first()
                         usr.available_funds += dividend
                         db.session.commit()
+            continue
         if i['home_score'] == 0 and i['away_score'] == 0:
             continue
         score_margin = i['score_margin']
