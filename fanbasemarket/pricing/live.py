@@ -77,7 +77,7 @@ def bigboy_pulls_only(db):
                     if starts[ix] > today:
                         break
                     ix += 1
-                startOfSeries = starts[ix]
+                startOfSeries = starts[ix - 1]
                 purchases = db.session.query(Purchase).\
                     filter(Purchase.purchased_at <= startOfSeries).\
                     filter(Purchase.exists == True).\
